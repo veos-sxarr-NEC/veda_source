@@ -5,14 +5,14 @@ template<typename T>
 static inline veda_memset2d(VEDAdeviceptr vdst_, const size_t pitch, const T value, const size_t _w, const size_t _h) {
 	VEDAptr<T> vdst(vdst_);
 	auto res = vdst.ptrSize();
-	size_t cnt = _h * pitch + _w;
+	size_t cnt = (_h * pitch) / sizeof(T);
 	if((vdst.offset() + cnt * sizeof(T)) > res.size)
 		return VEDA_ERROR_OUT_OF_BOUNDS;
 	
 	veda_omp(_h, [&](const size_t min, const size_t max) {
 		#pragma _NEC novector
 		for(size_t h = min; h < max; h++) {
-			auto ptr = &res.ptr[h * pitch];
+			auto ptr = &res.ptr[h * _w];
 			for(size_t w = 0; w < _w; w++)
 				ptr[w] = value;
 		}

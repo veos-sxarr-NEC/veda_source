@@ -6,13 +6,13 @@ If you have an existing CPU application, you can use the ```InjectVE.cmake``` fr
 ```bash
 mkdir build
 cd build
-cmake -D /usr/local/ve/veda/cmake/InjectVE.cmake ..
+cmake -D /opt/nec/ve/share/veda/cmake/InjectVE.cmake ..
 make
 ```
 
 ## How to run:
 ```bash
-VE_LD_LIBRARY_PATH=/usr/local/ve/veda/lib:. ./hello_world
+VE_LD_LIBRARY_PATH=/opt/nec/ve/veos/lib64:. ./hello_world
 ```
 
 ## Expected output:

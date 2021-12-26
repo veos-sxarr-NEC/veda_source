@@ -40,6 +40,8 @@ namespace veda {
 		float		coreTemp	(const int core) const;
 		float		powerCurrent	(void) const;
 		float		powerVoltage	(void) const;
+		float		powerCurrentEdge(void) const;
+		float		powerVoltageEdge(void) const;
 		int		aveoId		(void) const;
 		int		cacheL1d	(void) const;
 		int		cacheL1i	(void) const;

@@ -35,15 +35,16 @@ void setInitialized(const bool value) {
 
 		// Set Paths ---------------------------------------------------
 		if(!std::getenv("VEORUN_BIN")) {
-			std::string veorun(home);
+			std::string veorun("/opt/nec/ve/veos");
 			veorun.append("/libexec/aveorun");
 			if(std::getenv("VEDA_FTRACE"))
 				veorun.append("-ftrace");
 			setenv("VEORUN_BIN", veorun.c_str(), 1);
 		}
 
+		s_stdLib.clear();
 		s_stdLib.append(home);
-		s_stdLib.append("/libve/libveda.vso");
+		s_stdLib.append("/lib64/libveda.vso");
 
 		// Set VE_LD_LIBRARY_PATH if is not set ------------------------
 		if(!std::getenv("VE_LD_LIBRARY_PATH"))
@@ -51,6 +52,7 @@ void setInitialized(const bool value) {
 	}
 
 	// Set Initialized
+	veda::Semaphore::init();
 	s_initialized = value;
 }
 

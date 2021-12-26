@@ -22,6 +22,7 @@ namespace veda {
 			veo_proc_handle*	m_handle;
 			VEDAmodule		m_lib;
 			VEDAidx			m_memidx;
+			uint32_t		m_ref;
 
 		VEDAdeviceptr		newVPTR			(veo_ptr** ptr, const size_t size);
 		PtrTuple		getBasePtr		(VEDAdeviceptr vptr);
@@ -36,6 +37,7 @@ namespace veda {
 		Device&			device			(void);
 		Module*			moduleLoad		(const char* name);
 		PtrTuple		getPtr			(VEDAdeviceptr vptr);
+		PtrTuple		wrapper_getPtr		(VEDAdeviceptr vptr);
 		VPtrTuple		memAllocPitch		(const size_t w_bytes, const size_t h, const uint32_t elementSize, VEDAstream stream);
 		VEDAcontext_mode	mode			(void) const;
 		VEDAdeviceptr		memAlloc		(const size_t size, VEDAstream stream);
@@ -44,9 +46,11 @@ namespace veda {
 		VEDAresult		query			(VEDAstream stream);
 		int			streamCount		(void) const;
 		size_t			memUsed			(void);
-		veo_ptr			hmemId			(void) const;
+		size_t			wrapper_memUsed		(void);
+		veo_ptr			hmemId			(void);
 		veo_thr_ctxt*		stream			(const VEDAstream stream);
 		void			call			(VEDAfunction func, VEDAstream stream, VEDAargs args, const bool destroyArgs, const bool checkResult = false);
+		void			wrapper_call		(VEDAfunction func, VEDAstream stream, VEDAargs args, const bool destroyArgs, const bool checkResult = false);
 		void			call			(VEDAhost_function func, void* userData, VEDAstream stream);
 		void			destroy			(void);
 		void			init			(void);
@@ -65,8 +69,16 @@ namespace veda {
 		void			memset2D		(VEDAdeviceptr dst, const size_t pitch, const uint8_t value, const size_t w, const size_t h, VEDAstream stream);
 		void			moduleUnload		(const Module* mod);
 		void			sync			(VEDAstream stream);
+		void			stream_sync		(VEDAstream stream);
 		void			sync			(void);
+		void			wrapper_sync		(void);
 	const	char*			kernelName		(VEDAfunction func) const;
-	const	char*			kernelName		(const Kernel k) const;
+		void			inc_ref_count		(void);
+		void 			dec_ref_count		(uint32_t count);
+		uint32_t 		check_ref_count		(void);
+		bool			is_handle_valid		(void);
+		void			destroy_proc_handle	(void);
+const	char*			kernelName		(const Kernel k) const;
+
 	};
 }

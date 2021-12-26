@@ -56,6 +56,8 @@ VEDAresult	vedaDeviceGetName 		(char* name, int len, VEDAdevice dev);
 VEDAresult	vedaDeviceGetPower		(float* power, VEDAdevice dev);
 VEDAresult	vedaDeviceGetCurrent		(float* current, VEDAdevice dev);
 VEDAresult	vedaDeviceGetVoltage		(float* voltage, VEDAdevice dev);
+VEDAresult	vedaDeviceGetCurrentEdge	(float* current, VEDAdevice dev);
+VEDAresult	vedaDeviceGetVoltageEdge	(float* voltage, VEDAdevice dev);
 VEDAresult	vedaDeviceGetTemp		(float* tempC, const int coreIdx, VEDAdevice dev);
 VEDAresult	vedaDeviceGetPhysicalId		(int* id, VEDAdevice dev);
 VEDAresult	vedaDeviceGetAVEOId		(int* id, VEDAdevice dev);
@@ -74,7 +76,9 @@ VEDAresult	vedaGetVersion			(const char** str);
 VEDAresult	vedaInit			(uint32_t Flags);
 VEDAresult	vedaLaunchHostFunc		(VEDAstream stream, VEDAhost_function fn, void* userData);
 VEDAresult	vedaLaunchKernel		(VEDAfunction f, VEDAstream stream, VEDAargs);
-VEDAresult	vedaLaunchKernelEx		(VEDAfunction f, VEDAstream stream, VEDAargs, const int destroyArgs);
+#ifdef __cplusplus
+VEDAresult	vedaLaunchKernelEx		(VEDAfunction f, VEDAstream stream, VEDAargs, const int destroyArgs, const int Checkresult = 0);
+#endif
 VEDAresult	vedaMemAlloc			(VEDAdeviceptr* ptr, size_t size);
 VEDAresult	vedaMemAllocAsync		(VEDAdeviceptr* ptr, size_t size, VEDAstream stream);
 VEDAresult	vedaMemAllocHost		(void** pp, size_t bytesiz);

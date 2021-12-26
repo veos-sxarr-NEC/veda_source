@@ -29,3 +29,4 @@ TARGET_LINK_LIBRARIES(vera_test2 vera)
 INSTALL(TARGETS veda_test1 veda_test2 veda_test3 veda_test4 veda_test5 veda_test6 veda_mpi vera_test1 vera_test2 RUNTIME DESTINATION ${VEDA_INSTALL_PATH}/tests)
 
 ADD_SUBDIRECTORY(ve)
+ADD_SUBDIRECTORY(FT)
