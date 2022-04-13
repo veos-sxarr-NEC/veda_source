@@ -10,11 +10,6 @@ VEDAcontext Contexts::current(void) {
 		throw VEDA_ERROR_UNKNOWN_CONTEXT;
 	if(t_stack.back()->is_handle_valid() == false)
 	{
-//		uint32_t count = get_ctx_ins(t_stack.back());
-//		t_stack.back()->dec_ref_count(count);
-//		if(t_stack.back()->check_ref_count() == 0)
-//			t_stack.back()->device().destroyCtx();
-//		remove(t_stack.back());
 		throw VEDA_ERROR_CONTEXT_IS_DESTROYED;
 	}
 	return t_stack.back();

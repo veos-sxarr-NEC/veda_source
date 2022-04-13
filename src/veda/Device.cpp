@@ -2,7 +2,7 @@
 
 namespace veda {
 //------------------------------------------------------------------------------
-Context*	Device::ctx		(void) const					{	return m_ctx;								}
+Context*	Device::unsafeCtx	(void) const					{	return m_ctx;								}
 VEDAdevice	Device::vedaId		(void) const					{	return m_vedaId;							}
 bool		Device::isNUMA		(void) const					{	return m_isNUMA;							}
 float		Device::powerCurrent	(void) const					{	return readSensor<float>("sensor_12")/1000.0f / (isNUMA() ? 2 : 1);	}
@@ -24,6 +24,7 @@ int		Device::sensorId	(void) const					{	return m_sensorId;							}
 int		Device::versionAbi	(void) const					{	return m_versionAbi;							}
 int		Device::versionFirmware	(void) const					{	return m_versionFirmware;						}
 size_t		Device::memorySize	(void) const					{	return m_memorySize;							}
+int		Device::type		(void) const					{	return m_type;								}
 uint64_t	Device::readSensor	(const char* file, const bool isHex) const	{	return Devices::readSensor(sensorId(), file, isHex);			}
 
 //------------------------------------------------------------------------------
@@ -44,11 +45,12 @@ Device::Device(const VEDAdevice vedaId, const int aveoId, const int sensorId, co
 	m_versionAbi		(readSensor<int>	("abi_version")),
 	m_versionFirmware	(readSensor<int>	("fw_version")),
 	m_model			(readSensor<int>	("model")),
+	m_type			(readSensor<int>	("type")),
 	m_ctx			(0)
 {
 	int active = 0;
 	if(isNUMA()) {
-		char buffer[16];
+		char buffer[BUFFER_SIZE];
 		snprintf(buffer, sizeof(buffer), "numa%i_cores", numaId);
 		active = readSensor<int>(buffer, true);
 	} else {
@@ -57,34 +59,39 @@ Device::Device(const VEDAdevice vedaId, const int aveoId, const int sensorId, co
 	ASSERT(active);
 
 	int bit = 1;
-	for(int i = 0; i < 32; i++, bit <<= 1)
+	for(int i = 0; i < INT_SIZEIN_BITS; i++, bit <<= 1)
 		if(active & bit)
 			m_cores.emplace_back(i);
 }
 
 //------------------------------------------------------------------------------
 Device::~Device(void) {
-	if(ctx())
-		delete m_ctx;
+	if(auto ctx = unsafeCtx())
+		delete ctx;
+}
+
+//------------------------------------------------------------------------------
+Context* Device::ctx(void) const {
+	if(!m_ctx)
+		throw VEDA_ERROR_UNKNOWN_CONTEXT;
+	return m_ctx;
 }
 
 //------------------------------------------------------------------------------
 void Device::memReport(void) const {
-	if(ctx())
-		ctx()->memReport();
+	if(auto ctx = unsafeCtx())
+		ctx->memReport();
 }
 
 //------------------------------------------------------------------------------
 void Device::destroyCtx(void) {
-	if(!ctx())
-		throw VEDA_ERROR_UNKNOWN_CONTEXT;
-	delete m_ctx;
+	delete ctx();
 	m_ctx = 0;
 }
 
 //------------------------------------------------------------------------------
 Context* Device::createCtx(const VEDAcontext_mode mode) {
-	if(ctx())
+	if(m_ctx)
 		throw VEDA_ERROR_CANNOT_CREATE_CONTEXT;
 	m_ctx = new Context(*this, mode);
 	return m_ctx;
@@ -96,7 +103,7 @@ float Device::coreTemp(const int coreIdx) const {
 		throw VEDA_ERROR_INVALID_VALUE;
 	
 	auto sensor  = m_cores[coreIdx] + 14; // offseted by 14
-	char buffer[16];
+	char buffer[BUFFER_SIZE];
 	snprintf(buffer, sizeof(buffer), "sensor_%i", sensor);
 	return readSensor<float>(buffer)/1000000.0f;	
 }

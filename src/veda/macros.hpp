@@ -2,6 +2,10 @@
 
 #define MAP_EMPLACE(KEY, ...) std::piecewise_construct, std::forward_as_tuple(KEY), std::forward_as_tuple(__VA_ARGS__)
 #define MAX_NUMA_NODES 2
+#define VECTOR_RESERVE_SIZE 128
+#define BUFFER_SIZE 16
+#define BUFFER_SIZE2 128
+#define INT_SIZEIN_BITS (sizeof(int)*8)
 
 #define CVEO(...)	{ int err = __VA_ARGS__;	if(err != VEO_COMMAND_OK)	return veda::VEOtoVEDA(err);	}
 #define TVEO(...)	{ int err = __VA_ARGS__;	if(err != VEO_COMMAND_OK)	throw veda::VEOtoVEDA(err);	}

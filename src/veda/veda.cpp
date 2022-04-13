@@ -5,6 +5,7 @@ namespace veda {
 static bool		s_initialized	= false;
 static int		s_ompThreads	= 0;
 static std::string	s_stdLib;
+static int		s_envOmpThread  = 0;
 
 //------------------------------------------------------------------------------
 const char*	stdLib		(void) {	return s_stdLib.c_str();				}
@@ -23,10 +24,12 @@ void setInitialized(const bool value) {
 		auto env = std::getenv("VE_OMP_NUM_THREADS");
 		if(env)
 			s_ompThreads = std::atoi(env);
+		s_envOmpThread = s_ompThreads;
 
 		// Init StdLib Path --------------------------------------------
 		// Stolen from: https://stackoverflow.com/questions/33151264/get-dynamic-library-directory-in-c-linux
 		Dl_info dl_info;
+		memset(&dl_info, 0, sizeof(dl_info));
 		dladdr((void*)&veda::setInitialized, &dl_info);
 		std::string home(dl_info.dli_fname);
 		auto pos = home.find_last_of('/');	assert(pos != std::string::npos);
@@ -49,6 +52,12 @@ void setInitialized(const bool value) {
 		// Set VE_LD_LIBRARY_PATH if is not set ------------------------
 		if(!std::getenv("VE_LD_LIBRARY_PATH"))
 			setenv("VE_LD_LIBRARY_PATH", ".", 0);
+	}
+	else if(!value){
+		char tmp[3];
+		sprintf(tmp, "%d", s_envOmpThread);
+		//Resetting the "VE_OMP_NUM_THREADS" value to its original value at exit
+		setenv("VE_OMP_NUM_THREADS", tmp, 1);
 	}
 
 	// Set Initialized

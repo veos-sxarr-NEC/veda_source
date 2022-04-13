@@ -273,7 +273,6 @@ int main(int argc, char** argv) {
         	printf("PASSED\n");
         
                 auto start = NOW(), end = NOW();
-        
                 // Copy to VE0
                 CHECK(veraSetDevice(0));
                 void* ptr0;
@@ -300,8 +299,8 @@ int main(int argc, char** argv) {
                                 exit(1);
         		}
                 printf("PASSED\n");
+       if(devcnt > 1){ 
                 memset(host4, 0, size);
-        
                 // Copy from VE0 to VE1
                 CHECK(veraSetDevice(1));
                 void* ptr1;
@@ -330,7 +329,6 @@ int main(int argc, char** argv) {
                                 printf("FAILED\n");
                                 exit(1);
         		}
-        
                 printf("PASSED\n");
 
                 int* host4_ = (int*)malloc(size);
@@ -343,7 +341,6 @@ int main(int argc, char** argv) {
 
                 start = NOW();
 	       	end = NOW();
-
                 // Copy to VE0
                 CHECK(veraSetDevice(0));
                 void* ptr0_;
@@ -417,6 +414,7 @@ int main(int argc, char** argv) {
                 printf("free = %fms\n", time(start, end));
                 free(host4);
 
+       } 
       		printf("\nTEST CASE ID: FT_VERA_11:");
 		CHECK(veraModuleUnload(mod));
         	printf("PASSED\n");

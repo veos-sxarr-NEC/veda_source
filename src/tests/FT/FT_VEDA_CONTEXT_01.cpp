@@ -114,9 +114,23 @@ int main(int argc, char** argv) {
 			printf("FT_VEDA_CONTEXT_05 failed\n");
 			exit(0);
 		}
-      }
-      
-      CHECK(vedaExit());
+	}
+	CHECK(vedaExit());
+
+	printf("TEST CASE ID: FT_VEDA_CONTEXT_22\n");
+	CHECK(vedaInit(0));
+	for(int dev = 0; dev < devcnt; dev++) {
+		CHECK(vedaDeviceGetAttribute(&cores,VEDA_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT,dev));
+		CHECK(vedaCtxCreate(&cont, VEDA_CONTEXT_MODE_SCALAR, dev));
+		CHECK(vedaCtxStreamCnt(&cnt));
+		if(cnt != cores)
+		{
+			printf("FT_VEDA_CONTEXT_22 failed\n");
+			exit(0);
+		}
+	}
+	CHECK(vedaExit());
+
 	printf("TEST CASE ID: FT_VEDA_CONTEXT_06\n");
 	printf("TEST CASE ID: FT_VEDA_CONTEXT_07\n");
 	printf("TEST CASE ID: FT_VEDA_CONTEXT_08\n");
@@ -148,6 +162,7 @@ int main(int argc, char** argv) {
     	VEDAcontext c1, c2;
 	CHECK(vedaDevicePrimaryCtxRetain(&c1, 0));
 	CHECK(vedaCtxPushCurrent(c1));
+   if(devcnt > 1){
 	CHECK(vedaDevicePrimaryCtxRetain(&c2, 1));
 	CHECK(vedaCtxPushCurrent(c2));
     	vedaCtxGetCurrent(&current);
@@ -254,6 +269,7 @@ int main(int argc, char** argv) {
 		printf("FT_VEDA_CONTEXT_16 failed\n");
 		exit(0);
 	}
+   }
 	printf("TEST CASE ID: FT_VEDA_CONTEXT_18\n");
 	VEDAmodule mod;
 	const char* modName = "libveda_test.vso";
@@ -287,6 +303,7 @@ int main(int argc, char** argv) {
 		exit(0);
 	}
 	CHECK(vedaModuleUnload(mod));
+   if(devcnt > 1){
 	printf("TEST CASE ID: FT_VEDA_CONTEXT_20\n");
 	uint32_t version;
 	int aveo_id = 0;
@@ -297,7 +314,7 @@ int main(int argc, char** argv) {
 		exit(0);
 	}
 	printf("PASSED\n");
-
+    }
 
 	printf("\n# ------------------------------------- #\n");
 	printf("# All Tests passed!                     #\n");

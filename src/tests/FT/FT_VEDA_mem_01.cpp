@@ -26,6 +26,8 @@ int main(int argc, char** argv) {
 	printf("\nTEST CASE ID: FT_VEDA_MEM_01\n");
     	VEDAcontext c1, c2;
 	CHECK(vedaCtxCreate(&c1, VEDA_CONTEXT_MODE_SCALAR, 0));
+        int devcnt;
+        CHECK(vedaDeviceGetCount(&devcnt));
 	int8_t *h8, *host_2d;
 	int32_t *h32;
 	int64_t *h64;
@@ -267,6 +269,8 @@ int main(int argc, char** argv) {
 		exit(0);
 	}
 
+	if(devcnt > 1)
+	{
 	printf("\nTEST CASE ID: FT_VEDA_MEM_14\n");
 	CHECK(vedaMemsetD8(ptr, 0x12, size_1d/sizeof(int8_t)));
 	CHECK(vedaCtxCreate(&c2, VEDA_CONTEXT_MODE_SCALAR, 1));
@@ -282,6 +286,7 @@ int main(int argc, char** argv) {
 	CHECK(vedaMemcpyDtoD(ptr2,ptr,size_1d));
 	CHECK(vedaMemcpyDtoH(host,ptr2,size_1d));
 	h8 = (int8_t *)host;
+	printf("devcnt=%d\n",devcnt);
 	for(size_t i = 0; i < size_1d/sizeof(int8_t); i++) {
 		if(h8[i] != 0x12) {
 			printf("TEST CASE ID: FT_VEDA_MEM_14 failed\n");
@@ -289,6 +294,7 @@ int main(int argc, char** argv) {
 		}
 	}
 	CHECK(vedaMemFree(ptr2));
+	}
 	printf("\nTEST CASE ID: FT_VEDA_MEM_15\n");
 	CHECK(vedaCtxSetCurrent(c1));
 	memset(host, 0x00, size_1d);

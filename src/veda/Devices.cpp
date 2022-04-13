@@ -45,8 +45,8 @@ void Devices::init(void) {
 void Devices::initCount(std::set<int>& devices) {
 	assert(devices.empty());
 
-	struct dirent* dp;
-	DIR* fd;
+	struct dirent* dp = 0;
+	DIR* fd = 0;
 
 	if((fd = opendir("/dev/")) == NULL)
 		return;
@@ -131,7 +131,7 @@ uint64_t Devices::readSensor(const int sensorId, const char* file, const bool is
 	if(file == 0)
 		throw VEDA_ERROR_NO_SENSOR_FILE;
 
-	char buffer[128];
+	char buffer[BUFFER_SIZE2];
 	snprintf(buffer, sizeof(buffer), "/sys/class/ve/ve%i/%s", sensorId, file);
 
 	uint64_t value = 0;

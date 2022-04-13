@@ -21,6 +21,7 @@ namespace veda {
 		const	int			m_versionAbi;
 		const	int			m_versionFirmware;
 		const	int			m_model;
+		const	int			m_type;
 			Context*		m_ctx;
 
 		uint64_t	readSensor	(const char* file, const bool isHex) const;
@@ -35,6 +36,7 @@ namespace veda {
 				~Device		(void);
 		Context*	createCtx	(const VEDAcontext_mode mode);
 		Context*	ctx		(void) const;
+		Context*	unsafeCtx	(void) const;
 		VEDAdevice	vedaId		(void) const;
 		bool		isNUMA		(void) const;
 		float		coreTemp	(const int core) const;
@@ -60,5 +62,6 @@ namespace veda {
 		void		destroyCtx	(void);
 		void		memReport	(void) const;
 		void		report		(void) const;
+		int		type		(void) const;
 	};
 }

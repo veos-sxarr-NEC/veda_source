@@ -67,16 +67,9 @@ Context::Context(Device& device, const VEDAcontext_mode mode) :
 	}
 	ASSERT(numStreams);
 
-	auto createProc = [this](void) {
-		auto handle = veo_proc_create(this->device().aveoId());
-		if(!handle)
-			throw VEDA_ERROR_CANNOT_CREATE_CONTEXT;
-		return handle;	
-	};
-
-	// VE process is created and started on the VE device.
-	m_handle = createProc();
-	ASSERT(m_handle);
+	m_handle = veo_proc_create(this->device().aveoId());
+	if(!m_handle)
+		throw VEDA_ERROR_CANNOT_CREATE_CONTEXT;
 
 	// Load STDLib ---------------------------------------------------------
 	m_kernels.resize(VEDA_KERNEL_CNT);
@@ -95,7 +88,7 @@ Context::Context(Device& device, const VEDAcontext_mode mode) :
 		stream.ctx = veo_context_open(m_handle);
 		if(stream.ctx == 0)
 			throw VEDA_ERROR_CANNOT_CREATE_STREAM;
-		stream.calls.reserve(128);
+		stream.calls.reserve(VECTOR_RESERVE_SIZE);
 		ASSERT(stream.calls.empty());
 	}
 }
@@ -340,7 +333,7 @@ void Context::syncPtrs(void) {
 //------------------------------------------------------------------------------
 VEDAdeviceptr Context::memAlloc(const size_t size, VEDAstream stream) {
 	LOCK();
-	veo_ptr* ptr;
+	veo_ptr* ptr = 0;
 	auto vptr = newVPTR(&ptr, size);
 	if(size) 
 		vedaCtxCall(this, stream, true, kernel(VEDA_KERNEL_MEM_ALLOC), VEDAstack(ptr, VEDA_ARGS_INTENT_INOUT, sizeof(veo_ptr)), vptr, size);
@@ -558,7 +551,7 @@ VEDAresult Context::query(VEDAstream _stream) {
 // Ref Count
 //------------------------------------------------------------------------------
 void Context::inc_ref_count(void)		{	m_ref++;		}
-void Context::dec_ref_count(uint32_t count)	{	m_ref = m_ref - count;	}
+void Context::dec_ref_count(uint32_t count)	{	m_ref -= count;	}
 uint32_t Context::check_ref_count(void)		{	return m_ref;		}
 
 

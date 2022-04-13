@@ -32,7 +32,7 @@ VEDAresult vedaMemAllocPtr(void** ptr, VEDAdeviceptr vptr, const size_t size) {
 
 //------------------------------------------------------------------------------
 VEDAresult vedaMemAlloc(VEDAdeviceptr vptr, const size_t size) {
-	void* ptr;
+	void* ptr = 0;
 	return vedaMemAllocPtr(&ptr, vptr, size);
 }
 

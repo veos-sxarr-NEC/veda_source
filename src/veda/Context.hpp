@@ -22,7 +22,7 @@ namespace veda {
 			veo_proc_handle*	m_handle;
 			VEDAmodule		m_lib;
 			VEDAidx			m_memidx;
-			uint32_t		m_ref;
+			std::atomic<uint32_t>	m_ref;
 
 		VEDAdeviceptr		newVPTR			(veo_ptr** ptr, const size_t size);
 		PtrTuple		getBasePtr		(VEDAdeviceptr vptr);
